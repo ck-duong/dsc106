@@ -1,0 +1,17 @@
+body {
+  font-family: sans-serif;
+}
+.bar-chart {
+  background-color: #c7d9d9;
+}
+.axis {
+  font: 10px sans-serif;
+}
+.bar {
+  fill: slateblue;
+}
+.line {
+  fill: none;
+  stroke: slateblue;
+  stroke-width: 2px;
+}
