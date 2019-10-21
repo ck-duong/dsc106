@@ -11,7 +11,6 @@ import plotly.graph_objs as go
 
 #other imports
 import os
-import datetime
 
 daily_data_path = os.path.join('data', 'daily_sales.csv')
 monthly_data_path = os.path.join('data', 'monthly_sales.csv')
@@ -233,7 +232,8 @@ app.layout = html.Div(children=[
             }
     )])
     ], className = 'row'),
-    dcc.Graph(
+    html.Div([
+        html.Div([dcc.Graph(
         id='Dailys',
         figure={
             'data': [
@@ -250,7 +250,9 @@ app.layout = html.Div(children=[
         config={
 			'staticPlot': True,
             }
-    ), 
+    )], className = 'nine columns'),
+        html.Div([html.Img(src = 'https://github.com/ck-duong/dsc106/blob/master/hw2/imgs/peak_weak.png?raw=true')], className = 'three columns')
+             ], className = 'row')
 ])
 
 @app.server.route('/download') 
