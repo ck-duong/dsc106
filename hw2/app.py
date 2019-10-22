@@ -76,12 +76,12 @@ total_sales['Fish Sales Diff'] = ff_sales.apply(diff_from_mean)
 inflection = total_sales.iloc[19:]
 
 daily_sales = daily.groupby('Day of Week').sum()
-daily_sales['Hamburgers'] = daily_sales[hm_cols].sum(axis = 1)
-daily_sales['Chicken'] = daily_sales[cf_cols].sum(axis = 1)
-daily_sales['Fish'] = daily_sales[ff_cols].sum(axis = 1)
+daily_sales['Hamburger Sales'] = daily_sales[hm_cols].sum(axis = 1)
+daily_sales['Chicken Sales'] = daily_sales[cf_cols].sum(axis = 1)
+daily_sales['Fish Sales'] = daily_sales[ff_cols].sum(axis = 1)
 daily_sales = daily_sales.reset_index()
 
-daily_per = daily_sales[['Hamburgers', 'Chicken', 'Fish']].apply(lambda x: (x/x.sum()) * 100, axis = 1)
+daily_per = daily_sales[['Hamburger Sales', 'Chicken Sales', 'Fish Sales']].apply(lambda x: (x/x.sum()) * 100, axis = 1)
 daily_avg = daily_per.mean().to_frame('Percentage of Total Sales')
 
 monthly_per = total_sales[['Hamburger Sales', 'Chicken Sales', 'Fish Sales']].apply(lambda x: (x/x.sum()) * 100, axis = 1)
@@ -95,7 +95,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div(children=[
     html.H1(
-        children= "They're (Still Kinda) Lovin' It: McDonalds Sales Report",
+        children= "They're (Still Kinda) Lovin' It: McDonalds' Sales Report",
         style={
             'textAlign': 'center'
         }
@@ -103,23 +103,35 @@ app.layout = html.Div(children=[
     html.Div([html.H3('Recovering from the Impossible (Burger)')], style={
         'textAlign': 'center',
     }),
-    html.Div([dcc.Link('DOWNLOAD REPORT', href='/')],
+    html.Div([dcc.Link('DOWNLOAD REPORT', href='/'),
+             html.Br(),
+             html.Br()],
               style={
                   'textAlign': 'center',
                   'font-size': '24px'
     }),
-        html.Div([
+    html.Div([
+        html.H5(
+            'Overview'
+        ),
+        html.P(
+            "From January 2016 to October 2018, McDonalds' sales experienced a steady rate of growth, often selling more every month with few lulls that had little impact on our profit trend. Starting in August 2017, McDonalds has constantly sold more than our average sales, in total and for each of the three menu items. However, when Burger King released the Impossible Burger in October 2018, we experienced our first serious drop in sales, which occurred again in December 2018 and July 2019. I recommend looking into events surrounding these months to find the cause of these drops. However, do not fret; since then, our sales have still consistently been above our sales average for the most part, but there's always more money to be made."
+        )
+    ], style = {
+        'textAlign': 'center'
+    }),
+    html.Div([
         html.Div([dcc.Graph(
         id='MonthlySales',
         figure={
             'data': [
-                {'x': inflection['Month, Year'], 'y': inflection['Total Sales'], 'type': 'line', 'name': 'Total Sales'},
-                {'x': inflection['Month, Year'], 'y': inflection['Hamburger Sales'], 'type': 'line', 'name': 'Hamburger Sales'},
-                {'x': inflection['Month, Year'], 'y': inflection['Chicken Sales'], 'type': 'line', 'name': 'Chicken Sales'},
-                {'x': inflection['Month, Year'], 'y': inflection['Fish Sales'], 'type': 'line', 'name': 'Fish Sales'}
+                {'x': total_sales['Month, Year'], 'y': total_sales['Total Sales'], 'type': 'line', 'name': 'Total Sales'},
+                {'x': total_sales['Month, Year'], 'y': total_sales['Hamburger Sales'], 'type': 'line', 'name': 'Hamburger Sales'},
+                {'x': total_sales['Month, Year'], 'y': total_sales['Chicken Sales'], 'type': 'line', 'name': 'Chicken Sales'},
+                {'x': total_sales['Month, Year'], 'y': total_sales['Fish Sales'], 'type': 'line', 'name': 'Fish Sales'}
             ],
             'layout': {
-                    'title': 'Monthly Sales',
+                    'title': 'All Together: Monthly Sales',
                     'xaxis': {'title': 'Date'},
                     'yaxis': {'title': 'Average Monthly Sales (USD)'}
                 }
@@ -129,32 +141,45 @@ app.layout = html.Div(children=[
             }
     )], className = 'six columns'),
         html.Div([dcc.Graph(
-        id='TotalDiff',
-        figure={
-            'data': [
-                {'x': inflection['Month, Year'], 'y': inflection['Total Sales Diff'], 'type': 'bar', 'name': 'Total Change'},
-                {'x': inflection['Month, Year'], 'y': inflection['Hamburger Sales Diff'], 'type': 'bar', 'name': 'Hamburger Change'},
-                {'x': inflection['Month, Year'], 'y': inflection['Chicken Sales Diff'], 'type': 'bar', 'name': 'Chicken Change'},
-                {'x': inflection['Month, Year'], 'y': inflection['Fish Sales Diff'], 'type': 'bar', 'name': 'Fish Change'}
-            ],
-            'layout': {
-                    'title': 'Back to Basics: Monthly Difference from Average Sales',
-                    'xaxis': {'title': 'Date'},
-                    'yaxis': {'title': 'Difference from Average Sales Gross (USD)'}
+            id='TotalDiff',
+            figure={
+                'data': [
+                    {'x': inflection['Month, Year'], 'y': inflection['Total Sales Diff'], 'type': 'bar', 'name': 'Total Change'},
+                    {'x': inflection['Month, Year'], 'y': inflection['Hamburger Sales Diff'], 'type': 'bar', 'name': 'Hamburger Change'},
+                    {'x': inflection['Month, Year'], 'y': inflection['Chicken Sales Diff'], 'type': 'bar', 'name': 'Chicken Change'},
+                    {'x': inflection['Month, Year'], 'y': inflection['Fish Sales Diff'], 'type': 'bar', 'name': 'Fish Change'}
+                ],
+                'layout': {
+                        'title': 'Back to Basics: Monthly Difference from Average Sales',
+                        'xaxis': {'title': 'Date'},
+                        'yaxis': {'title': 'Difference from Average Sales Gross (USD)'}
+                    }
+            },
+            config={
+                'staticPlot': True,
                 }
-        },
-        config={
-			'staticPlot': True,
-            }
     )], className = 'six columns')
     ], className = 'row'),
+    html.Div([
+        html.Br(),
+        html.Br(),
+        html.Br(),
+        html.H5(
+            'Bringing in the Bank: Sales Distributions'
+        ),
+        html.P(
+            "Hamburgers make up about 60% of McDonalds' sales on both a daily and a monthly scale. Following behind is Chicken Filet at about 25% and Fish Fillet at 15%. These distributions are relatively similar across regions (as seen in Menu Dash below) and across both daily and monthly sales."
+        )
+    ], style = {
+        'textAlign': 'center'
+    }),
     html.Div([
        html.Div([dcc.Graph(id='dailyPer',
                            figure=go.Figure(
                                data=[go.Pie(labels=daily_avg.index,
                                             values=daily_avg['Percentage of Total Sales'])],
                                layout=go.Layout(
-                                   title='Tried and True: Daily Sales Breakdown')
+                                   title='Tried and True: Average Daily Sales Breakdown')
                            ),
                           config={
                                    'staticPlot': True,
@@ -164,12 +189,25 @@ app.layout = html.Div(children=[
                                data=[go.Pie(labels=monthly_avg.index,
                                             values=monthly_avg['Percentage of Total Sales'])],
                                layout=go.Layout(
-                                   title='Same Old Same Old: Monthly Sales Breakdown')
+                                   title='Same Old Same Old: Average Monthly Sales Breakdown')
                            ),
                            config={
                                    'staticPlot': True,
                                })], className="six columns")
     ], className="row"),
+    html.Div([
+        html.Br(),
+        html.Br(),
+        html.Br(),
+        html.H5(
+            'Menu Dash: Monthly Sales for Menu Items by Region'
+        ),
+        html.P(
+            "All three menu items have similar trends of sales, though at different rates (similar patterns, different numbers). The North East typically leads the regions in sales for all three menu items. Since the trends are relatively similar among regions and items, a generalized nationwide strategy, such as hamburger deals in the springtime, could prove effective to raise profit margins."
+        )
+    ], style = {
+        'textAlign': 'center'
+    }),
     html.Div([
         html.Div([dcc.Graph(
         id='MonthlyBurgerSales',
@@ -233,16 +271,29 @@ app.layout = html.Div(children=[
     )])
     ], className = 'row'),
     html.Div([
+        html.Br(),
+        html.Br(),
+        html.Br(),
+        html.H5(
+            'Daily Double: Daily Item Sales Averages'
+        ),
+        html.P(
+            "Although Fish Filet sales are always lower than Hamburger and Chicken Filet sales, sales for Fish Filets peak on Fridays, so I recommend trying to monopolize on this existing trend by offering Fish Filet-based deals on Fridays. During the weekend (Friday through Sunday), sales of all three items are typically the lowest they are out of the entire week for certain regions. To combat this, I recommend taking a look at the peak and weak days listed in the table below and reducing (for weak days) the listed food in the listed region."
+        )
+    ], style = {
+        'textAlign': 'center'
+    }),
+    html.Div([
         html.Div([dcc.Graph(
         id='Dailys',
         figure={
             'data': [
-                {'x': daily_sales['Day of Week'], 'y': daily_sales['Hamburgers'], 'type': 'line', 'name': 'Hamburgers'},
-                {'x': daily_sales['Day of Week'], 'y': daily_sales['Chicken'], 'type': 'line', 'name': 'Chicken'},
-                {'x': daily_sales['Day of Week'], 'y': daily_sales['Fish'], 'type': 'line', 'name': 'Fish'}
+                {'x': daily_sales['Day of Week'], 'y': daily_sales['Hamburger Sales'], 'type': 'line', 'name': 'Hamburgers'},
+                {'x': daily_sales['Day of Week'], 'y': daily_sales['Chicken Sales'], 'type': 'line', 'name': 'Chicken'},
+                {'x': daily_sales['Day of Week'], 'y': daily_sales['Fish Sales'], 'type': 'line', 'name': 'Fish'}
             ],
             'layout': {
-                    'title': 'Daily Duty: Daily Sales',
+                    'title': 'Daily Duty: Total Daily Sales Nationwide',
                     'xaxis': {'title': 'Day of Week'},
                     'yaxis': {'title': 'Average Daily Sales (USD)'}
                 }
@@ -251,7 +302,7 @@ app.layout = html.Div(children=[
 			'staticPlot': True,
             }
     )], className = 'nine columns'),
-        html.Div([html.Img(src = 'https://github.com/ck-duong/dsc106/blob/master/hw2/imgs/peak_weak.png?raw=true')], className = 'three columns')
+        html.Div([html.Img(src = 'https://github.com/ck-duong/dsc106/blob/master/hw2/imgs/peakweak.png?raw=true')], className = 'three columns')
              ], className = 'row')
 ])
 
