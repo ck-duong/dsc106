@@ -3,10 +3,10 @@
  * built-in events with handlers defined on the parent element.
  */
 
-["mousemove", "touchmove", "touchstart"].forEach(function(eventType) {
+["mousemove", "touchmove", "touchstart"].forEach(function (eventType) {
   document
     .getElementById("sharedGrid")
-    .addEventListener(eventType, function(e) {
+    .addEventListener(eventType, function (e) {
       var chart, point, i, event;
 
       for (i = 0; i < 3; i = i + 1) {
@@ -35,7 +35,7 @@
  * Override the reset function, we don't need to hide the tooltips and
  * crosshairs.
  */
-Highcharts.Pointer.prototype.reset = function() {
+Highcharts.Pointer.prototype.reset = function () {
   Highcharts.charts[3].setTitle({
     text: "Avg<br></br><b>7020 MW</b>"
   });
@@ -74,7 +74,7 @@ var globalPoint;
 /**
  * Highlight a point by showing tooltip, setting hover state and draw crosshair
  */
-Highcharts.Point.prototype.highlight = function(event) {
+Highcharts.Point.prototype.highlight = function (event) {
   event = this.series.chart.pointer.normalize(event);
   this.onMouseOver(); // Show the hover marker
   this.series.chart.tooltip.refresh(this); // Show the tooltip
@@ -90,7 +90,7 @@ function syncExtremes(e) {
 
   if (e.trigger !== "syncExtremes") {
     // Prevent feedback loop
-    Highcharts.each(Highcharts.charts, function(chart) {
+    Highcharts.each(Highcharts.charts, function (chart) {
       if (chart !== thisChart) {
         if (chart.xAxis[0].setExtremes) {
           // It is null while updating
@@ -105,8 +105,7 @@ function syncExtremes(e) {
 
 let sharedConfig = {
   layout: "3x1",
-  graphset: [
-    {
+  graphset: [{
       // config for the energy stacked area graph
       chart: {
         type: "area",
@@ -126,7 +125,7 @@ let sharedConfig = {
         "#417505"
       ],
       title: {
-        text: "Generation MW",
+        text: "<b>Generation</b> MW",
         fontSize: 18,
         align: "left"
       },
@@ -183,16 +182,16 @@ let sharedConfig = {
       },
       tooltip: {
         shared: false,
-        positioner: function() {
+        positioner: function () {
           return {
             // right aligned
             x: this.chart.chartWidth - this.label.width,
             y: 10 // align to title
           };
         },
-        formatter: function() {
+        formatter: function () {
           return (
-            Highcharts.dateFormat("%e %b, %l:%M%p", new Date(this.x)) +
+            Highcharts.dateFormat("%e %b, %l:%M %p", new Date(this.x)) +
             " | " +
             this.series.name +
             " " +
@@ -220,11 +219,9 @@ let sharedConfig = {
       credits: {
         enabled: false
       },
-      series: [
-        {
-          data: []
-        }
-      ]
+      series: [{
+        data: []
+      }]
     },
     {
       // config for the price line graph
@@ -289,17 +286,17 @@ let sharedConfig = {
       },
       tooltip: {
         shared: true,
-        positioner: function() {
+        positioner: function () {
           return {
             // right aligned
             x: this.chart.chartWidth - this.label.width,
             y: 10 // align to title
           };
         },
-        formatter: function() {
+        formatter: function () {
           return (
             "<b>" +
-            Highcharts.dateFormat("%e %b, %l:%M%p", new Date(this.x)) +
+            Highcharts.dateFormat("%e %b, %l:%M %p", new Date(this.x)) +
             "</b> | <b>$" +
             this.y +
             ".00" +
@@ -381,17 +378,17 @@ let sharedConfig = {
       },
       tooltip: {
         shared: true,
-        positioner: function() {
+        positioner: function () {
           return {
             // right aligned
             x: this.chart.chartWidth - this.label.width,
             y: 10 // align to title
           };
         },
-        formatter: function() {
+        formatter: function () {
           return (
             "<b>" +
-            Highcharts.dateFormat("%e %b, %l:%M%p", new Date(this.x)) +
+            Highcharts.dateFormat("%e %b, %l:%M %p", new Date(this.x)) +
             "</b> | Avg <b>" +
             this.y +
             "°F" +
@@ -418,11 +415,10 @@ let pieConfig = {
     menuItemDefinitions: {
       // Custom definition
       switchChart: {
-        onclick: function() {
+        onclick: function () {
           var chartType = this.options.chart.type;
 
-          if (chartType === "bar") {
-          }
+          if (chartType === "bar") {}
           this.update({
             chart: {
               type: chartType === "bar" ? "pie" : "bar"
@@ -483,13 +479,11 @@ let pieConfig = {
       }
     }
   },
-  series: [
-    {
-      name: "Energy",
-      colorByPoint: true,
-      data: []
-    }
-  ]
+  series: [{
+    name: "Energy",
+    colorByPoint: true,
+    data: []
+  }]
 };
 
 // global data-structure to hold the energy breakup
@@ -511,16 +505,20 @@ function updateGlobalEnergyData(data) {
 }
 
 function updateLegend(nodeId) {
-  var dataset = globalEnergyData["keys"].map(function(elm, idx) {
+  var dataset = globalEnergyData["keys"].map(function (elm, idx) {
     return {
       name: elm,
       y: [globalEnergyData["values"][nodeId][idx]][0]
     };
   });
+  var curTime = Highcharts.dateFormat("%e %b, %l:%M %p", new Date(globalPoint));
+  document.getElementById("DateText").innerHTML = curTime;
+
   var total = 0;
   for (var i = 0; i < dataset.length; i = i + 1) {
     total = total + dataset[i].y;
   }
+
   document.getElementById("TotalPower").innerHTML = total.toFixed(0);
   var load = Number(dataset[4].y.toFixed(0)) + Number(dataset[6].y.toFixed(0));
 
@@ -580,7 +578,7 @@ function updateLegend(nodeId) {
 // the nodeId is basically the x-axis value
 // the actual breakup is retrieved from the global data-structure
 function renderPieChart(nodeId) {
-  var pieDataSet = globalEnergyData["keys"].map(function(elm, idx) {
+  var pieDataSet = globalEnergyData["keys"].map(function (elm, idx) {
     if (elm !== "exports" && elm !== "pumps") {
       return {
         name: elm,
@@ -589,15 +587,13 @@ function renderPieChart(nodeId) {
     }
   });
   pieDataSet.push(pieDataSet.splice(4, 1)[0]);
-  pieConfig.series = [
-    {
-      name: "Energy Generated",
-      colorByPoint: true,
-      data: pieDataSet,
-      innerSize: "50%",
-      size: "90%"
-    }
-  ];
+  pieConfig.series = [{
+    name: "Energy Generated",
+    colorByPoint: true,
+    data: pieDataSet,
+    innerSize: "50%",
+    size: "90%"
+  }];
 
   var pieChart = document.createElement("div");
   pieChart.className = "chart";
@@ -607,7 +603,7 @@ function renderPieChart(nodeId) {
 
 function updatePieChart(nodeId) {
   var totalPie = 0;
-  var pieDataSet = globalEnergyData["keys"].map(function(elm, idx) {
+  var pieDataSet = globalEnergyData["keys"].map(function (elm, idx) {
     if (elm !== "exports" && elm !== "pumps") {
       totalPie += [globalEnergyData["values"][nodeId][idx]][0];
       return {
@@ -617,21 +613,20 @@ function updatePieChart(nodeId) {
     }
   });
   pieDataSet.push(pieDataSet.splice(4, 1)[0]);
-  pieConfig.series = [
-    {
-      name: "Energy Generated (MW)",
-      colorByPoint: true,
-      data: pieDataSet,
-      innerSize: "40%",
-      size: "90%"
-    }
-  ];
+  pieConfig.series = [{
+    name: "Energy Generated (MW)",
+    colorByPoint: true,
+    data: pieDataSet,
+    innerSize: "40%",
+    size: "90%"
+  }];
 
   document.getElementById("pieGrid");
   Highcharts.charts[3].series[0].setData(
     pieDataSet,
-    true,
-    { duration: 10 },
+    true, {
+      duration: 10
+    },
     true
   );
 
@@ -646,13 +641,13 @@ function updatePieChart(nodeId) {
 // It also plots the pie chart for nodeId=0
 function onSuccessCb(jsonData) {
   var energyData = jsonData
-    .filter(function(elm) {
+    .filter(function (elm) {
       return elm["type"] === "power";
     })
-    .map(function(elm) {
+    .map(function (elm) {
       if (elm.fuel_tech === "exports" || elm.fuel_tech === "pumps") {
         return {
-          data: elm["history"]["data"].map(function(x) {
+          data: elm["history"]["data"].map(function (x) {
             return x * -1;
           }),
           name: elm["id"].split(".")[elm["id"].split(".").length - 2],
@@ -669,10 +664,10 @@ function onSuccessCb(jsonData) {
     });
   updateGlobalEnergyData(energyData);
   var priceData = jsonData
-    .filter(function(elm) {
+    .filter(function (elm) {
       return elm["type"] === "price";
     })
-    .map(function(elm) {
+    .map(function (elm) {
       return {
         data: elm["history"]["data"],
         name: elm["id"].split(".")[1],
@@ -680,17 +675,17 @@ function onSuccessCb(jsonData) {
       };
     });
   var tempData = jsonData
-    .filter(function(elm) {
+    .filter(function (elm) {
       return elm["type"] === "temperature";
     })
-    .map(function(elm) {
+    .map(function (elm) {
       return {
         data: elm["history"]["data"],
         name: elm["id"].split(".")[1],
         showInLegend: false
       };
     });
-  var start = jsonData.map(function(elm) {
+  var start = jsonData.map(function (elm) {
     if (elm["history"]["start"]) {
       return elm["history"]["start"] * 1000;
     }
@@ -735,7 +730,7 @@ function onSuccessCb(jsonData) {
 function fetchJSONFile(filePath, callbackFunc) {
   console.debug("Fetching file:", filePath);
   var httpRequest = new XMLHttpRequest();
-  httpRequest.onreadystatechange = function() {
+  httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState === 4) {
       if (httpRequest.status === 200 || httpRequest.status === 0) {
         console.info("Loaded file:", filePath);
@@ -746,6 +741,7 @@ function fetchJSONFile(filePath, callbackFunc) {
 
         data.forEach(undersample);
         let us_data;
+
         function undersample(item) {
           if (item.history.interval === "5m") {
             us_data = [];

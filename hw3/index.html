@@ -1,149 +1,155 @@
 <html>
-  <head>
-    <title>Highcharts HW3</title>
-    <!-- Internal stylesheet import -->
-    <link rel="stylesheet" href="main.css" />
-  </head>
-  <body>
-    <!-- External imports begin -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/data.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <!-- External imports end -->
-    <table class="simpleTable" border="0">
-      <tr>
-        <td width="5%">
-          <img src="assets/logo.png" alt="Simpsons logo" class="pageLogo" />
-        </td>
-        <td><h1>Energy Springfield</h1></td>
-      </tr>
-    </table>
 
-    <!-- Chart Placement Table -->
-    <table class="simpleTable greaterArea" border="0">
-      <tr>
-        <td rowspan="2" id="sharedGrid"></td>
-        <td id="legendGrid">
-          <table class="legendTable" border="0">
-            <tr>
-              <td>
-                <p></p>
-              </td>
-              <td>
-                <p><b>Power</b><br />MW</p>
-              </td>
-              <td>
-                <p><b>Contribution</b><br />to demand</p>
-              </td>
-              <td>
-                <p><b>AvValue</b><br />$/MWh</p>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <p><b>Sources</b></p>
-              </td>
-              <td id="TotalPower">1,097</td>
-              <td>-</td>
-              <td id="AvgPrice">$58.62</td>
-            </tr>
-            <tr>
-              <td>
-                <div class="color-box" style="background-color: #417505;"></div>
-                Wind
-              </td>
-              <td id="WindPower">81</td>
-              <td id="WindContribution">7.5%</td>
-              <td id="WindAvg">$56.43</td>
-            </tr>
-            <tr>
-              <td>
-                <div class="color-box" style="background-color: #88AFD0;"></div>
-                Hydro
-              </td>
-              <td id="HydroPower">60</td>
-              <td id="HydroContribution">5.5%</td>
-              <td id="HydroAvg">$63.96</td>
-            </tr>
-            <tr>
-              <td>
-                <div class="color-box" style="background-color: FDB462;"></div>
-                Gas
-              </td>
-              <td id="GasPower">65</td>
-              <td id="GasContribution">6.0%</td>
-              <td id="GasAvg">$60.22</td>
-            </tr>
-            <tr>
-              <td>
-                <div class="color-box" style="background-color: #F35020;"></div>
-                Distillate
-              </td>
-              <td id="DistillatePower">0.02</td>
-              <td id="DistillateContribution">0.002%</td>
-              <td id="DistillateAvg">$57.42</td>
-            </tr>
-            <tr>
-              <td>
-                <div class="color-box" style="background-color: #121212;"></div>
-                Black Coal
-              </td>
-              <td id="CoalPower">891</td>
-              <td id="CoalContribution">82.3%</td>
-              <td id="CoalAvg">$59.01</td>
-            </tr>
-            <tr>
-              <td>
-                <p><b>Loads</b></p>
-              </td>
-              <td id="TotalLoad">-15</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td>
-                <div class="color-box" style="background-color: #88AFD0;"></div>
-                Exports
-              </td>
-              <td id="ExportPower">-2</td>
-              <td id="ExportContribution">-0.2%</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td>
-                <div class="color-box" style="background-color: #977AB1;"></div>
-                Pumps
-              </td>
-              <td id="PumpPower">-12</td>
-              <td id="PumpContribution">-1.1%</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td>
-                <b>Net</b>
-              </td>
-              <td id="NetTotal">1,083</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td>
-                <b>Renewables</b>
-              </td>
-              <td>-</td>
-              <td id="ReTotal">13.0%</td>
-              <td>-</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td id="pieGrid"></td>
-      </tr>
-    </table>
+<head>
+  <title>Highcharts HW3</title>
+  <!-- Internal stylesheet import -->
+  <link rel="stylesheet" href="main.css" />
+</head>
 
-    <!-- Internal imports begin -->
-    <script src="main.js"></script>
-    <!-- Internal imports end -->
-  </body>
+<body>
+  <!-- External imports begin -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/data.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <!-- External imports end -->
+  <table class="simpleTable" border="0">
+    <tr>
+      <td width="5%">
+        <img src="assets/logo.png" alt="Simpsons logo" class="pageLogo" />
+      </td>
+      <td>
+        <h1>Energy Springfield</h1>
+      </td>
+      <td id="DateText" align="right"></td>
+    </tr>
+  </table>
+
+  <!-- Chart Placement Table -->
+  <table class="simpleTable greaterArea" border="0">
+    <tr>
+      <td rowspan="2" id="sharedGrid"></td>
+      <td id="legendGrid">
+        <table class="legendTable" border="0">
+          <tr>
+            <td>
+              <p></p>
+            </td>
+            <td>
+              <p><b>Power</b><br />MW</p>
+            </td>
+            <td>
+              <p><b>Contribution</b><br />to demand</p>
+            </td>
+            <td>
+              <p><b>AvValue</b><br />$/MWh</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p><b>Sources</b></p>
+            </td>
+            <td id="TotalPower">1,097</td>
+            <td>-</td>
+            <td id="AvgPrice">$58.62</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-box" style="background-color: #417505;"></div>
+              Wind
+            </td>
+            <td id="WindPower">81</td>
+            <td id="WindContribution">7.5%</td>
+            <td id="WindAvg">$56.43</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-box" style="background-color: #88AFD0;"></div>
+              Hydro
+            </td>
+            <td id="HydroPower">60</td>
+            <td id="HydroContribution">5.5%</td>
+            <td id="HydroAvg">$63.96</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-box" style="background-color: FDB462;"></div>
+              Gas
+            </td>
+            <td id="GasPower">65</td>
+            <td id="GasContribution">6.0%</td>
+            <td id="GasAvg">$60.22</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-box" style="background-color: #F35020;"></div>
+              Distillate
+            </td>
+            <td id="DistillatePower">0.02</td>
+            <td id="DistillateContribution">0.002%</td>
+            <td id="DistillateAvg">$57.42</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-box" style="background-color: #121212;"></div>
+              Black Coal
+            </td>
+            <td id="CoalPower">891</td>
+            <td id="CoalContribution">82.3%</td>
+            <td id="CoalAvg">$59.01</td>
+          </tr>
+          <tr>
+            <td>
+              <p><b>Loads</b></p>
+            </td>
+            <td id="TotalLoad">-15</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-box" style="background-color: #88AFD0;"></div>
+              Exports
+            </td>
+            <td id="ExportPower">-2</td>
+            <td id="ExportContribution">-0.2%</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-box" style="background-color: #977AB1;"></div>
+              Pumps
+            </td>
+            <td id="PumpPower">-12</td>
+            <td id="PumpContribution">-1.1%</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>
+              <b>Net</b>
+            </td>
+            <td id="NetTotal">1,083</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>
+              <b>Renewables</b>
+            </td>
+            <td>-</td>
+            <td id="ReTotal">13.0%</td>
+            <td>-</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td id="pieGrid"></td>
+    </tr>
+  </table>
+
+  <!-- Internal imports begin -->
+  <script src="main.js"></script>
+  <!-- Internal imports end -->
+</body>
+
 </html>
