@@ -525,7 +525,7 @@ function updateLegend(nodeId) {
   var load = Number(dataset[4].y.toFixed(0)) + Number(dataset[6].y.toFixed(0));
 
   var coal = Number(dataset[0].y.toFixed(0));
-  var distillate = Number(dataset[1].y.toFixed(0));
+  var distillate = Number(dataset[1].y.toFixed(3));
   var gas = Number(dataset[2].y.toFixed(0));
   var hydro = Number(dataset[3].y.toFixed(0));
   var pump = Number(dataset[4].y.toFixed(0));
