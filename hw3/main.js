@@ -3,10 +3,10 @@
  * built-in events with handlers defined on the parent element.
  */
 
-["mousemove", "touchmove", "touchstart"].forEach(function(eventType) {
+["mousemove", "touchmove", "touchstart"].forEach(function (eventType) {
   document
     .getElementById("sharedGrid")
-    .addEventListener(eventType, function(e) {
+    .addEventListener(eventType, function (e) {
       var chart, point, i, event;
 
       for (i = 0; i < 3; i = i + 1) {
@@ -35,7 +35,7 @@
  * Override the reset function, we don't need to hide the tooltips and
  * crosshairs.
  */
-Highcharts.Pointer.prototype.reset = function() {
+Highcharts.Pointer.prototype.reset = function () {
   Highcharts.charts[3].setTitle({
     text: "Avg<br></br><b>7020 MW</b>"
   });
@@ -74,7 +74,7 @@ var globalPoint;
 /**
  * Highlight a point by showing tooltip, setting hover state and draw crosshair
  */
-Highcharts.Point.prototype.highlight = function(event) {
+Highcharts.Point.prototype.highlight = function (event) {
   event = this.series.chart.pointer.normalize(event);
   this.onMouseOver(); // Show the hover marker
   this.series.chart.tooltip.refresh(this); // Show the tooltip
@@ -90,7 +90,7 @@ function syncExtremes(e) {
 
   if (e.trigger !== "syncExtremes") {
     // Prevent feedback loop
-    Highcharts.each(Highcharts.charts, function(chart) {
+    Highcharts.each(Highcharts.charts, function (chart) {
       if (chart !== thisChart) {
         if (chart.xAxis[0].setExtremes) {
           // It is null while updating
@@ -183,14 +183,14 @@ let sharedConfig = {
       },
       tooltip: {
         shared: false,
-        positioner: function() {
+        positioner: function () {
           return {
             // right aligned
             x: this.chart.chartWidth - this.label.width,
             y: 10 // align to title
           };
         },
-        formatter: function() {
+        formatter: function () {
           return (
             "<b>" +
             Highcharts.dateFormat("%e %b, %l:%M %p", new Date(this.x)) +
@@ -290,14 +290,14 @@ let sharedConfig = {
       },
       tooltip: {
         shared: true,
-        positioner: function() {
+        positioner: function () {
           return {
             // right aligned
             x: this.chart.chartWidth - this.label.width,
             y: 10 // align to title
           };
         },
-        formatter: function() {
+        formatter: function () {
           return (
             "<b>" +
             Highcharts.dateFormat("%e %b, %l:%M %p", new Date(this.x)) +
@@ -382,14 +382,14 @@ let sharedConfig = {
       },
       tooltip: {
         shared: true,
-        positioner: function() {
+        positioner: function () {
           return {
             // right aligned
             x: this.chart.chartWidth - this.label.width,
             y: 10 // align to title
           };
         },
-        formatter: function() {
+        formatter: function () {
           return (
             "<b>" +
             Highcharts.dateFormat("%e %b, %l:%M %p", new Date(this.x)) +
@@ -419,7 +419,7 @@ let pieConfig = {
     menuItemDefinitions: {
       // Custom definition
       switchChart: {
-        onclick: function() {
+        onclick: function () {
           var chartType = this.options.chart.type;
 
           if (chartType === "bar") {
@@ -512,7 +512,7 @@ function updateGlobalEnergyData(data) {
 }
 
 function updateLegend(nodeId) {
-  var dataset = globalEnergyData["keys"].map(function(elm, idx) {
+  var dataset = globalEnergyData["keys"].map(function (elm, idx) {
     return {
       name: elm,
       y: [globalEnergyData["values"][nodeId][idx]][0]
@@ -585,7 +585,7 @@ function updateLegend(nodeId) {
 // the nodeId is basically the x-axis value
 // the actual breakup is retrieved from the global data-structure
 function renderPieChart(nodeId) {
-  var pieDataSet = globalEnergyData["keys"].map(function(elm, idx) {
+  var pieDataSet = globalEnergyData["keys"].map(function (elm, idx) {
     if (elm !== "exports" && elm !== "pumps") {
       return {
         name: elm,
@@ -612,7 +612,7 @@ function renderPieChart(nodeId) {
 
 function updatePieChart(nodeId) {
   var totalPie = 0;
-  var pieDataSet = globalEnergyData["keys"].map(function(elm, idx) {
+  var pieDataSet = globalEnergyData["keys"].map(function (elm, idx) {
     if (elm !== "exports" && elm !== "pumps") {
       totalPie += [globalEnergyData["values"][nodeId][idx]][0];
       return {
@@ -653,13 +653,13 @@ function updatePieChart(nodeId) {
 // It also plots the pie chart for nodeId=0
 function onSuccessCb(jsonData) {
   var energyData = jsonData
-    .filter(function(elm) {
+    .filter(function (elm) {
       return elm["type"] === "power";
     })
-    .map(function(elm) {
+    .map(function (elm) {
       if (elm.fuel_tech === "exports" || elm.fuel_tech === "pumps") {
         return {
-          data: elm["history"]["data"].map(function(x) {
+          data: elm["history"]["data"].map(function (x) {
             return x * -1;
           }),
           name: elm["id"].split(".")[elm["id"].split(".").length - 2],
@@ -676,10 +676,10 @@ function onSuccessCb(jsonData) {
     });
   updateGlobalEnergyData(energyData);
   var priceData = jsonData
-    .filter(function(elm) {
+    .filter(function (elm) {
       return elm["type"] === "price";
     })
-    .map(function(elm) {
+    .map(function (elm) {
       return {
         data: elm["history"]["data"],
         name: elm["id"].split(".")[1],
@@ -687,17 +687,17 @@ function onSuccessCb(jsonData) {
       };
     });
   var tempData = jsonData
-    .filter(function(elm) {
+    .filter(function (elm) {
       return elm["type"] === "temperature";
     })
-    .map(function(elm) {
+    .map(function (elm) {
       return {
         data: elm["history"]["data"],
         name: elm["id"].split(".")[1],
         showInLegend: false
       };
     });
-  var start = jsonData.map(function(elm) {
+  var start = jsonData.map(function (elm) {
     if (elm["history"]["start"]) {
       return elm["history"]["start"] * 1000;
     }
@@ -742,7 +742,7 @@ function onSuccessCb(jsonData) {
 function fetchJSONFile(filePath, callbackFunc) {
   console.debug("Fetching file:", filePath);
   var httpRequest = new XMLHttpRequest();
-  httpRequest.onreadystatechange = function() {
+  httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState === 4) {
       if (httpRequest.status === 200 || httpRequest.status === 0) {
         console.info("Loaded file:", filePath);
