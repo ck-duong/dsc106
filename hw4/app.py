@@ -7,8 +7,6 @@ import plotly.express as px
 
 from PIL import Image
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
-import matplotlib.pyplot as plt
-%matplotlib inline
 
 #imports for data + manipulation
 import pandas as pd
@@ -25,15 +23,13 @@ import os
 
 rachel_df = pd.read_csv('https://raw.githubusercontent.com/ck-duong/dsc106/master/hw4/rachel.csv', index_col = 0)
 
-countries = rachel_df.groupby('year')['countries'].sum()
+countries = rachel_df['countries']
+countries = countries.str.strip('[]').str.split(',\s+').apply(lambda x: pd.Series(x).value_counts()).sum()
 countries = countries.reset_index()
-yearly = countries['countries'].apply(lambda x: pd.Series(x).value_counts()).fillna(0)
-yearly['year'] = countries.year
-country_df = pd.melt(yearly, 'year').rename({'variable': 'Country', 'value': 'Movie Count', 'year': 'Year'}, axis = 1)
-country_df = country_df.loc[country_df['Movie Count'] > 0].sort_values('Year').reset_index(drop = True)
+countries['index'] = countries['index'].str.replace("'", "")
+countries = countries.rename({'index': 'Country', 0: 'Movie Count'}, axis = 1)
 
-chlor_map = px.choropleth(country_df, locations =  'Country', locationmode = 'country names', color = 'Movie Count', 
-             animation_frame="Year")
+chlor_map = px.choropleth(countries, locations =  'Country', locationmode = 'country names', color = 'Movie Count')
 
 dropped = rachel_df.dropna(subset = ['domestic', 'international'])\
 [['original title', 'year', 'domestic', 'international', 'total']]
@@ -70,6 +66,9 @@ tree = go.Figure(go.Treemap(
 text = rachel_df['plot'].str.cat(sep=' ').lower()
 text = text.replace(':', '').replace('-', '').replace(',','').replace('.', '').strip(' ').replace('"', '').replace("'", '')
 
+stopwords = set(STOPWORDS)
+stopwords.update(["Anonymous", 'IMDb', ' '])
+
 words = pd.Series(text.split(' ')).value_counts()
 words = words.loc[~words.index.isin(stopwords)]
 words = words[words.index != '']
@@ -97,18 +96,24 @@ app.layout = html.Div(children = [
         }),
     html.P("text descritiopn and stuff"),
     html.Div(children = [
-        html.H3('map'),
+        html.H3('Going All the Way (Around the World)'),
+        html.H5("Choropleth Map: Where Are Rachel Weisz Movies Produced"),
         dcc.Graph(figure = chlor_map),
         html.P('text decr')
     ]),
     html.Div(children = [
-        html.H3('tree'),
+        html.H3('Rachel the Great and Powerful'),
+        html.H5('Treemap: Total (Domestic and International) Gross of Rachel Weisz Movies'),
         dcc.Graph(figure = tree),
         html.P('text decr')
     ]),
     html.Div(children = [
-        html.H3('table and cloud'),
-        html.Img('wordcloud.png')
+        html.H3('The Favourite Roles'),
+        html.H5('Wordcloud and Interative Table: Commonly Used Words in Plot Summaries of Rachel Weisz Movies'),
+        html.Img(src = 'https://github.com/ck-duong/dsc106/blob/master/hw4/wordcloud.png?raw=true',
+                style={
+            'textAlign': 'center'
+        }),
         dcc.Graph(figure = tab),
         html.P('text decr')
     ]),
