@@ -5,6 +5,11 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import plotly.express as px
 
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import matplotlib.pyplot as plt
+%matplotlib inline
+
 #imports for data + manipulation
 import pandas as pd
 import numpy as np
@@ -62,6 +67,23 @@ tree = go.Figure(go.Treemap(
     textinfo = "label+value+percent parent",
 ))
 
+text = rachel_df['plot'].str.cat(sep=' ').lower()
+text = text.replace(':', '').replace('-', '').replace(',','').replace('.', '').strip(' ').replace('"', '').replace("'", '')
+
+words = pd.Series(text.split(' ')).value_counts()
+words = words.loc[~words.index.isin(stopwords)]
+words = words[words.index != '']
+words = words.to_frame('count').reset_index().rename({'index': 'word'}, axis = 1)
+words['rank'] = words.index + 1
+words = words[['rank', 'word', 'count']]
+
+tab = go.Figure(data=[go.Table(
+    header=dict(values=list(words.columns),
+                align='left'),
+    cells=dict(values=[words['rank'], words['word'], words['count']],
+               align='left'))
+])
+
 ####
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -82,6 +104,12 @@ app.layout = html.Div(children = [
     html.Div(children = [
         html.H3('tree'),
         dcc.Graph(figure = tree),
+        html.P('text decr')
+    ]),
+    html.Div(children = [
+        html.H3('table and cloud'),
+        html.Img('wordcloud.png')
+        dcc.Graph(figure = tab),
         html.P('text decr')
     ]),
 ])
